@@ -54,7 +54,7 @@ export default function Profile() {
       </div>
 
       <button
-        onClick={() => { setUser(null); nav("/"); }}
+        onClick={handleLogout}
         className="mt-8 w-full rounded-full glass-soft py-4 font-medium text-destructive/90 inline-flex items-center justify-center gap-2"
       >
         <LogOut className="h-4 w-4" /> Sign out
