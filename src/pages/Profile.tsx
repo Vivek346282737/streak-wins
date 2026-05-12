@@ -1,11 +1,27 @@
 import PageHeader from "@/components/PageHeader";
 import { usePact } from "@/store/PactContext";
+import { useAuth } from "@/store/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { LogOut, Bell, Shield, HelpCircle, ChevronRight } from "lucide-react";
+import { toast } from "sonner";
 
 export default function Profile() {
-  const { user, identity, categories, setUser } = usePact();
+  const { identity, categories, setUser: setLocalUser } = usePact();
+  const { user: authUser, logout } = useAuth();
   const nav = useNavigate();
+  const user = {
+    name: authUser?.displayName || authUser?.email?.split("@")[0] || "Friend",
+    phone: authUser?.phoneNumber || authUser?.email || undefined,
+  };
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setLocalUser(null);
+      nav("/auth", { replace: true });
+    } catch {
+      toast.error("Failed to sign out");
+    }
+  };
 
   return (
     <div className="pact-page animate-fade-up">
@@ -38,7 +54,7 @@ export default function Profile() {
       </div>
 
       <button
-        onClick={() => { setUser(null); nav("/"); }}
+        onClick={handleLogout}
         className="mt-8 w-full rounded-full glass-soft py-4 font-medium text-destructive/90 inline-flex items-center justify-center gap-2"
       >
         <LogOut className="h-4 w-4" /> Sign out
